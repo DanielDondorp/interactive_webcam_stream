@@ -19,23 +19,9 @@ from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
 from skimage import io
 
+from .Camera import Camera
 
-class Camera(QtCore.QThread):
-    change_pixmap_signal = QtCore.pyqtSignal(np.ndarray)
-    def __init__(self):
-        QtCore.QThread.__init__(self)
-        self.running = False
-    def run(self):
-        self.running = True
-        cap = cv2.VideoCapture(0)
-        while self.running:
-            ret, frame = cap.read()
-            if ret:
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                frame = cv2.flip(frame, 1)
-                self.change_pixmap_signal.emit(frame)
-                
-        cap.release()
+
         
 class SavingThread(QtCore.QThread):
     def __init__(self, parent):

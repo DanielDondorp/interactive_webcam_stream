@@ -1,6 +1,7 @@
 
 import cv2
 from PyQt5 import QtCore
+import numpy as np
 
 class Camera(QtCore.QThread):
     change_pixmap_signal = QtCore.pyqtSignal(np.ndarray)

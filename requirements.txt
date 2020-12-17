@@ -1,0 +1,8 @@
+opencv-python~=4.4.0.46
+numpy~=1.17.1
+PyQt5~=5.12.3
+tensorflow~=2.1.0
+tqdm~=4.35.0
+sklearn~=0.0
+scikit-learn~=0.21.3
+scikit-image~=0.15.0

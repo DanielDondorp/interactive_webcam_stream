@@ -120,8 +120,10 @@ class Main(QtWidgets.QMainWindow, Ui_MainWindow):
         
     def train_model(self):
         self.thread.change_pixmap_signal.disconnect()
-        im = self.convert_cv_qt(np.random.randint(0,255,size = (800,600)))
-        self.ui.label.setPixmap(im)
+        # im = self.convert_cv_qt(np.random.randint(0,255,size = (800,600)))
+        # self.ui.label.setPixmap(im)
+        self.update_image(np.random.random(size = (800,600)))
+        self.ui.label.setText("TRAINING!")
         ModelTrainer(parent = self)
         self.thread.change_pixmap_signal.connect(self.update_image)
         

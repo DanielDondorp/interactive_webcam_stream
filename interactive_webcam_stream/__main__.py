@@ -30,7 +30,7 @@ class Main(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.ui.label.resize(1200,800)
-        
+
         self.thread = Camera()
         self.thread.change_pixmap_signal.connect(self.update_image)
         self.thread.start()
@@ -42,6 +42,23 @@ class Main(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ui.pushButton_get_data.clicked.connect(self.start_capture)
         self.ui.pushButton_predict.clicked.connect(self.start_prediction)
         self.ui.pushButton_train_model.clicked.connect(self.train_model)
+        self.ui.actionsetWorkingDir.triggered.connect(self.set_working_dir)
+
+        self.wd = os.getenv("HOME")
+        sys.stdout.write(f"\n workingdir = {self.wd}")
+        if not os.path.exists(os.path.join(self.wd, "iws_data")):
+            os.mkdir(os.path.join(self.wd, "iws_data"))
+
+
+    def set_working_dir(self):
+        # print("YAAY")
+        wd = QtWidgets.QFileDialog.getExistingDirectory(self, caption = "Choose a work directory to save training data and models",
+                                                             directory= self.wd,
+                                                             options=QtWidgets.QFileDialog.DontUseNativeDialog)
+        if wd:
+            self.wd = wd
+        else:
+            QtWidgets.QMessageBox.warning(self, "No directory chosen.", f"workdir remains {self.wd}")
         
     @QtCore.pyqtSlot(np.ndarray)
     def update_image(self, frame):
@@ -76,8 +93,10 @@ class Main(QtWidgets.QMainWindow, Ui_MainWindow):
    
     def start_capture(self):
         s = self.ui.lineEdit.text()
-        if not os.path.exists(f"./data/{s}"):
-            os.mkdir(f"./data/{s}")
+        if not os.path.exists(f"{self.wd}/iws_data"):
+            os.mkdir(f"{self.wd}/iws_data")
+        if not os.path.exists(f"{self.wd}/iws_data/{s}"):
+            os.mkdir(f"{self.wd}/iws_data/{s}")
         self.capturing = True
         self.saving_thread = SavingThread(self)
         self.saving_thread.start()
@@ -102,14 +121,16 @@ class Main(QtWidgets.QMainWindow, Ui_MainWindow):
         self.thread.change_pixmap_signal.disconnect()
         im = self.convert_cv_qt(np.random.randint(0,255,size = (800,600)))
         self.ui.label.setPixmap(im)
-        ModelTrainer()
+        ModelTrainer(parent = self)
         self.thread.change_pixmap_signal.connect(self.update_image)
         
         # m.start()
         
     def closeEvent(self, event):
-        print("closing")
+        print("\\n closing")
         self.thread.running = False
+        self.saving_thread.running = False
+        self.classifyer.running = False
         event.accept()
 
 

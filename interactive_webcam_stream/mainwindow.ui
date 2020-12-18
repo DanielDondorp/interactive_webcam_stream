@@ -68,8 +68,20 @@
      <height>30</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>Fi&amp;le</string>
+    </property>
+    <addaction name="actionsetWorkingDir"/>
+   </widget>
+   <addaction name="menuFile"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionsetWorkingDir">
+   <property name="text">
+    <string>setWorkingDir</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

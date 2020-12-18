@@ -8,13 +8,14 @@ from sklearn.model_selection import train_test_split
 from skimage import io
 
 class ModelTrainer:
-    def __init__(self):
-        X_train, X_test, y_train, y_test, le = self.create_dataset()
+    def __init__(self, parent):
+        self.parent = parent
+        X_train, X_test, y_train, y_test, le = self.create_dataset(path_to_data = f"{parent.wd}/iws_data/")
         model = self.create_model(len(le.classes_))
-        model.fit(X_train, y_train, validation_data = (X_test, y_test), epochs = 10)
-        model.save("model_home")
+        model.fit(X_train, y_train, validation_data = (X_test, y_test), epochs = 3)
+        model.save(f"{self.parent.wd}/iws_data/model")
         classes = le.classes_
-        np.save("classes.npy", classes)
+        np.save(f"{self.parent.wd}/iws_data/classes.npy", classes)
 
     def create_dataset(self, path_to_data = "./data"):
         images = glob.glob(f"{path_to_data}/**/*.jpg")

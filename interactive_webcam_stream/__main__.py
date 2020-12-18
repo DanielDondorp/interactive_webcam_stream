@@ -74,6 +74,7 @@ class Main(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.capturing = False
                 self.counter = 0
                 self.ui.label_2.setText("Label:")
+                self.saving_thread.running = False
         
         if self.predicting:
             self.capture_q.put((frame, self.ui.lineEdit.text(), self.counter))
@@ -129,8 +130,14 @@ class Main(QtWidgets.QMainWindow, Ui_MainWindow):
     def closeEvent(self, event):
         print("\\n closing")
         self.thread.running = False
-        self.saving_thread.running = False
-        self.classifyer.running = False
+        try:
+            self.saving_thread.running = False
+        except:
+            pass
+        try:
+            self.classifyer.running = False
+        except:
+            pass
         event.accept()
 
 

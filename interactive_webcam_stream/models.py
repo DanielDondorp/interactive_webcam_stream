@@ -5,6 +5,7 @@ import glob, tqdm
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
+from skimage import io
 
 class ModelTrainer:
     def __init__(self):

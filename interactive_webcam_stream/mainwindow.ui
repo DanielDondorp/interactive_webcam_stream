@@ -70,16 +70,28 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>Fi&amp;le</string>
+     <string>co&amp;nfig</string>
     </property>
     <addaction name="actionsetWorkingDir"/>
+    <addaction name="actionset_n_images"/>
+    <addaction name="actionclear_all_training_data"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionsetWorkingDir">
    <property name="text">
-    <string>setWorkingDir</string>
+    <string>&amp;setWorkingDir</string>
+   </property>
+  </action>
+  <action name="actionset_n_images">
+   <property name="text">
+    <string>set_n_images</string>
+   </property>
+  </action>
+  <action name="actionclear_all_training_data">
+   <property name="text">
+    <string>clear_all_training_data</string>
    </property>
   </action>
  </widget>

@@ -5,7 +5,7 @@ Created on Tue Dec 15 10:54:23 2020
 
 @author: daniel
 """
-import sys, os
+import sys, os, shutil
 import cv2
 from mainwindow import Ui_MainWindow
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -31,6 +31,8 @@ class Main(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ui.setupUi(self)
         self.ui.label.resize(1200,800)
 
+        self.n_images = 500
+
         self.thread = Camera()
         self.thread.change_pixmap_signal.connect(self.update_image)
         self.thread.start()
@@ -43,6 +45,8 @@ class Main(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ui.pushButton_predict.clicked.connect(self.start_prediction)
         self.ui.pushButton_train_model.clicked.connect(self.train_model)
         self.ui.actionsetWorkingDir.triggered.connect(self.set_working_dir)
+        self.ui.actionset_n_images.triggered.connect(self.set_n_images)
+        self.ui.actionclear_all_training_data.triggered.connect(self.clear_all_training_data)
 
         self.wd = os.getenv("HOME")
         sys.stdout.write(f"\n workingdir = {self.wd}")
@@ -59,7 +63,29 @@ class Main(QtWidgets.QMainWindow, Ui_MainWindow):
             self.wd = wd
         else:
             QtWidgets.QMessageBox.warning(self, "No directory chosen.", f"workdir remains {self.wd}")
-        
+
+    def set_n_images(self):
+        val,ok = QtWidgets.QInputDialog.getInt(self, "set n images",
+                                                      "How many images to capture per training catogery?",
+                                                      min=0,
+                                                      max=10000,
+                                                      value=300)
+        if ok:
+            self.n_images = val
+        else:
+            QtWidgets.QMessageBox.warning(self, "value not set", f"Value not set. n_images set to {self.n_images}")
+
+    def clear_all_training_data(self):
+        path_to_delete = os.path.join(self.wd, "iws_data")
+        paths = os.listdir(path_to_delete)
+        sys.stdout.write(" ".join(paths))
+        for path in paths:
+            to_remove = os.path.join(path_to_delete, path)
+            sys.stdout.write(to_remove)
+            if os.path.exists(to_remove) and os.path.isdir(to_remove):
+                sys.stdout.write(f"\n\nDeleting {to_remove}")
+                shutil.rmtree(to_remove)
+
     @QtCore.pyqtSlot(np.ndarray)
     def update_image(self, frame):
         qt_img = self.convert_cv_qt(frame)
@@ -68,9 +94,9 @@ class Main(QtWidgets.QMainWindow, Ui_MainWindow):
         if self.capturing:
             self.capture_q.put((frame, self.ui.lineEdit.text(), self.counter))
             self.counter+=1
-            self.ui.label_2.setText(f"Capturing image {self.counter}/300")
+            self.ui.label_2.setText(f"Capturing image {self.counter}/{self.n_images}")
         
-            if self.counter >= 300:
+            if self.counter >= self.n_images:
                 self.capturing = False
                 self.counter = 0
                 self.ui.label_2.setText("Label:")
